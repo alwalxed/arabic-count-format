@@ -1,26 +1,16 @@
 {
-  "name": "arabic-count",
+  "name": "arabic-count-format",
   "version": "1.0.0",
-  "description": "A TypeScript utility for correct Arabic number–noun grammar",
+  "description": "A utility that returns grammatically correct Arabic noun forms based on numeric count. Handles singular, dual, plural, and special rules for numbers like 0, 2, and 11+",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "sideEffects": false,
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target node",
-    "build:types": "tsc --emitDeclarationOnly --outDir dist",
-    "build:all": "bun run build && bun run build:types",
-    "test": "bun test",
-    "test:coverage": "bun test --coverage",
-    "prepublishOnly": "bun run build:all"
+    "build": "tsup ./src/index.ts --format cjs,esm --dts",
+    "lint": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "arabic",
@@ -31,7 +21,8 @@
     "numbers"
   ],
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "tsup": "^8.3.5"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

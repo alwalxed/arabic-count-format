@@ -1,21 +1,21 @@
-# Arabic Count
+# Arabic Count Format
 
-A TypeScript utility for correct Arabic number–noun grammar.
+A utility that returns grammatically correct Arabic noun forms based on numeric count. Handles singular, dual, plural, and special rules for numbers like 0, 2, and 11+
 
 ## Installation
 
 ```bash
-npm i arabic-count
+npm i arabic-count-format
 # or
-bun i arabic-count
-yarn add arabic-count
-pnpm add arabic-count
+bun i arabic-count-format
+yarn add arabic-count-format
+pnpm add arabic-count-format
 ```
 
 ## Usage
 
 ```typescript
-import { getArabicCountPhrase, type ArabicNounForms } from "arabic-count";
+import { formatArabicCount, type ArabicNounForms } from "arabic-count-format";
 
 const carForms: ArabicNounForms = {
   singular: "سيارة",
@@ -24,14 +24,14 @@ const carForms: ArabicNounForms = {
 };
 
 // Basic usage
-getArabicCountPhrase({ count: 0, nounForms: carForms }); // "لا سيارة"
-getArabicCountPhrase({ count: 1, nounForms: carForms }); // "سيارة"
-getArabicCountPhrase({ count: 2, nounForms: carForms }); // "سيارتان"
-getArabicCountPhrase({ count: 7, nounForms: carForms }); // "٧ سيارات"
-getArabicCountPhrase({ count: 15, nounForms: carForms }); // "١٥ سيارة"
+formatArabicCount({ count: 0, nounForms: carForms }); // "لا سيارة"
+formatArabicCount({ count: 1, nounForms: carForms }); // "سيارة"
+formatArabicCount({ count: 2, nounForms: carForms }); // "سيارتان"
+formatArabicCount({ count: 7, nounForms: carForms }); // "٧ سيارات"
+formatArabicCount({ count: 15, nounForms: carForms }); // "١٥ سيارة"
 
 // With additional options
-getArabicCountPhrase({
+formatArabicCount({
   count: 1,
   nounForms: carForms,
   alwaysShowNumber: true,
@@ -41,7 +41,7 @@ getArabicCountPhrase({
 
 ## API Reference
 
-### `getArabicCountPhrase(options)`
+### `formatArabicCount(options)`
 
 Returns the grammatically correct Arabic phrase for a given count and noun.
 
@@ -68,4 +68,4 @@ If you encounter any issues or have suggestions, please submit them via issues o
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/alwalxed/arabic-count/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/alwalxed/arabic-count-format/blob/main/LICENSE) file for details.

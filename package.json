@@ -1,0 +1,57 @@
+{
+  "name": "arabic-count",
+  "version": "1.0.0",
+  "description": "A TypeScript utility for correct Arabic number–noun grammar",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "build:all": "bun run build && bun run build:types",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "prepublishOnly": "bun run build:all"
+  },
+  "keywords": [
+    "arabic",
+    "i18n",
+    "internationalization",
+    "localization",
+    "grammar",
+    "numbers"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "author": "Awa alwalxed@proton.me",
+  "license": "MIT",
+  "homepage": "https://github.com/alwalxed/arabic-count",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alwalxed/arabic-count"
+  },
+  "bugs": {
+    "url": "https://github.com/alwalxed/arabic-count/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

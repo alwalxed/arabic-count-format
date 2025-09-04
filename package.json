@@ -1,6 +1,6 @@
 {
   "name": "arabic-count-format",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A utility that pluralizes Arabic nouns correctly based on numeric count, handling singular, dual, plural, and special cases such as 0, 2, and 11+.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

@@ -31,9 +31,9 @@ export interface ArabicCountPhraseOptions {
   nounForms: ArabicNounForms;
 
   /**
-   * Optional locale for number formatting (defaults to "ar-EG")
+   * Optional locale for number formatting (defaults to "ar-SA")
    */
-  locale?: string;
+  locale?: Intl.LocalesArgument;
 
   /**
    * Whether to include the number in the output for counts 1 and 2
@@ -83,7 +83,7 @@ export function formatArabicCount(options: ArabicCountPhraseOptions): string {
   const {
     count,
     nounForms,
-    locale = "ar-EG",
+    locale = "ar-SA",
     alwaysShowNumber = false,
   } = options;
 
@@ -106,24 +106,30 @@ export function formatArabicCount(options: ArabicCountPhraseOptions): string {
   }
 
   const absoluteCount = Math.abs(count);
-
   const arabicNumber = new Intl.NumberFormat(locale).format(absoluteCount);
 
-  const integerCount = Math.floor(absoluteCount);
+  const isInteger = Number.isInteger(absoluteCount);
+
+  if (!isInteger) {
+    return `${ arabicNumber } ${ nounForms.singular }`;
+  }
+
+  const integerCount = absoluteCount;
 
   if (integerCount === 0) {
-    return `لا ${nounForms.singular}`;
+    return `لا ${ nounForms.singular }`;
   } else if (integerCount === 1) {
     return alwaysShowNumber
-      ? `${arabicNumber} ${nounForms.singular}`
+      ? `${ arabicNumber } ${ nounForms.singular }`
       : nounForms.singular;
   } else if (integerCount === 2) {
     return alwaysShowNumber
-      ? `${arabicNumber} ${nounForms.dual}`
+      ? `${ arabicNumber } ${ nounForms.dual }`
       : nounForms.dual;
   } else if (integerCount >= 3 && integerCount <= 10) {
-    return `${arabicNumber} ${nounForms.plural}`;
+    return `${ arabicNumber } ${ nounForms.plural }`;
   } else {
-    return `${arabicNumber} ${nounForms.singular}`;
+    return `${ arabicNumber } ${ nounForms.singular }`;
   }
 }
+

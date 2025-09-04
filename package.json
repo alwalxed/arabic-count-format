@@ -1,7 +1,7 @@
 {
   "name": "arabic-count-format",
   "version": "1.0.0",
-  "description": "A utility that returns grammatically correct Arabic noun forms based on numeric count. Handles singular, dual, plural, and special rules for numbers like 0, 2, and 11+",
+  "description": "A utility that pluralizes Arabic nouns correctly based on numeric count, handling singular, dual, plural, and special cases such as 0, 2, and 11+.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -18,7 +18,13 @@
     "internationalization",
     "localization",
     "grammar",
-    "numbers"
+    "numbers",
+    "arabic pluralization",
+    "arabic grammar",
+    "arabic nouns",
+    "singular dual plural",
+    "arabic number formatting",
+    "arabic inflection"
   ],
   "devDependencies": {
     "@types/bun": "latest",
@@ -27,15 +33,15 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "author": "Awa alwalxed@proton.me",
+  "author": "alwalxed <alwalxed@proton.me>",
   "license": "MIT",
-  "homepage": "https://github.com/alwalxed/arabic-count",
+  "homepage": "https://github.com/alwalxed/arabic-count-format",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alwalxed/arabic-count"
+    "url": "git+https://github.com/alwalxed/arabic-count-format"
   },
   "bugs": {
-    "url": "https://github.com/alwalxed/arabic-count/issues"
+    "url": "https://github.com/alwalxed/arabic-count-format/issues"
   },
   "files": [
     "dist",

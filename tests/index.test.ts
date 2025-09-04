@@ -42,12 +42,6 @@ describe("formatArabicCount", () => {
     );
   });
 
-  test("handles decimal numbers correctly", () => {
-    expect(formatArabicCount({ count: 3.7, nounForms: carForms })).toBe(
-      "٣٫٧ سيارات"
-    );
-  });
-
   test("respects alwaysShowNumber option", () => {
     expect(
       formatArabicCount({
@@ -87,5 +81,14 @@ describe("formatArabicCount", () => {
     expect(() =>
       formatArabicCount({ count: NaN, nounForms: carForms })
     ).toThrow();
+  });
+
+  test("handles fractional numbers correctly (defaults to singular)", () => {
+    expect(formatArabicCount({ count: 3.7, nounForms: carForms })).toBe(
+      "٣٫٧ سيارة"
+    );
+    expect(formatArabicCount({ count: -2.5, nounForms: carForms })).toBe(
+      "٢٫٥ سيارة"
+    );
   });
 });

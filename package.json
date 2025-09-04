@@ -1,30 +1,38 @@
 {
   "name": "arabic-count-format",
   "version": "1.0.1",
-  "description": "A utility that pluralizes Arabic nouns correctly based on numeric count, handling singular, dual, plural, and special cases such as 0, 2, and 11+.",
+  "description": "A minimal, zero-dependency utility for pluralizing Arabic nouns across singular, dual, and plural forms, including 0 and 11+ counts",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
   "scripts": {
     "build": "tsup ./src/index.ts --format cjs,esm --dts",
     "lint": "tsc",
-    "test": "vitest run",
-    "test:watch": "vitest",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
     "arabic",
+    "pluralization",
+    "grammar",
+    "nouns",
+    "singular",
+    "dual",
+    "plural",
+    "number-formatting",
+    "inflection",
     "i18n",
     "internationalization",
     "localization",
-    "grammar",
-    "numbers",
-    "arabic pluralization",
-    "arabic grammar",
-    "arabic nouns",
-    "singular dual plural",
-    "arabic number formatting",
-    "arabic inflection"
+    "arabic-grammar",
+    "count-formatting"
   ],
   "devDependencies": {
     "@types/bun": "latest",
@@ -33,7 +41,7 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "author": "alwalxed <alwalxed@proton.me>",
+  "author": "Awa <alwalxed@proton.me>",
   "license": "MIT",
   "homepage": "https://github.com/alwalxed/arabic-count-format",
   "repository": {
@@ -50,5 +58,9 @@
   ],
   "engines": {
     "node": ">=14.0.0"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/alwalxed"
   }
 }

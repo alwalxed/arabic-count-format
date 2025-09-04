@@ -1,14 +1,14 @@
 # Arabic Count Formatter
 
-A utility that pluralizes Arabic nouns correctly based on numeric count, handling singular, dual, plural, and special cases such as 0, 2, and 11+
+A minimal, zero-dependency utility for pluralizing Arabic nouns across singular, dual, and plural forms, including 0 and 11+ counts.
 
 ## Features
 
-- Returns correct Arabic noun forms for any numeric count
-- Supports singular, dual, plural, and special rules for 0, 2, 11+
-- Handles Arabic number formatting and locale (ar-SA, en-US)
-- Optionally always show the number for counts 1 and 2
-- Lightweight, zero dependencies
+- Provides the correct Arabic noun forms for any numeric count.
+- Supports singular, dual, plural, and specific rules for counts of 0, 2, and 11 or more.
+- Handles Arabic number formatting and locale settings (ar-SA, en-US).
+- Optionally displays the number for counts of 1 and 2.
+- Lightweight and requires no dependencies.
 
 ## Installation
 
@@ -56,12 +56,12 @@ Returns the grammatically correct Arabic phrase for a given count and noun.
 
 #### Options
 
-| Parameter          | Type                   | Description                                      | Default    |
-| ------------------ | ---------------------- | ------------------------------------------------ | ---------- |
-| `count`            | `number`               | The numeric count of items                       | (required) |
-| `nounForms`        | `ArabicNounForms`      | The various forms of the Arabic noun             | (required) |
-| `locale`           | `Intl.LocalesArgument` | Locale for number formatting                     | `"ar-SA"`  |
-| `alwaysShowNumber` | `boolean`              | Whether to include the number for counts 1 and 2 | `false`    |
+| Parameter          | Type              | Description                                      | Default    |
+| ------------------ | ----------------- | ------------------------------------------------ | ---------- |
+| `count`            | `number`          | The numeric count of items                       | (required) |
+| `nounForms`        | `ArabicNounForms` | The various forms of the Arabic noun             | (required) |
+| `locale`           | `string`          | Locale for number formatting                     | `"ar-SA"`  |
+| `alwaysShowNumber` | `boolean`         | Whether to include the number for counts 1 and 2 | `false`    |
 
 #### ArabicNounForms
 

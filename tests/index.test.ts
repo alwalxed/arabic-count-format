@@ -8,87 +8,75 @@ describe("formatArabicCount", () => {
     plural: "سيارات",
   };
 
-  test("handles zero correctly", () => {
-    expect(formatArabicCount({ count: 0, nounForms: carForms })).toBe(
-      "لا سيارة"
-    );
+  const fractionalTests: [ number, string ][] = [
+    [ 3.7, "٣٫٧ سيارة" ],
+    [ -2.5, "٢٫٥ سيارة" ],
+    [ 0.1, "٠٫١ سيارة" ],
+  ];
+
+  test.each([
+    [ 0, "لا سيارة" ],
+    [ 1, "سيارة" ],
+    [ 2, "سيارتان" ],
+    [ 5, "٥ سيارات" ],
+    [ 10, "١٠ سيارات" ],
+    [ 11, "١١ سيارة" ],
+    [ 15, "١٥ سيارة" ],
+    [ -3, "٣ سيارات" ],
+  ])("handles count %d correctly", (count, expected) => {
+    expect(formatArabicCount({ count, nounForms: carForms })).toBe(expected);
   });
 
-  test("handles singular correctly", () => {
-    expect(formatArabicCount({ count: 1, nounForms: carForms })).toBe("سيارة");
-  });
-
-  test("handles dual correctly", () => {
-    expect(formatArabicCount({ count: 2, nounForms: carForms })).toBe(
-      "سيارتان"
-    );
-  });
-
-  test("handles small plurals (3-10) correctly", () => {
-    expect(formatArabicCount({ count: 5, nounForms: carForms })).toBe(
-      "٥ سيارات"
-    );
-  });
-
-  test("handles large numbers (11+) correctly", () => {
-    expect(formatArabicCount({ count: 15, nounForms: carForms })).toBe(
-      "١٥ سيارة"
-    );
-  });
-
-  test("handles negative numbers correctly", () => {
-    expect(formatArabicCount({ count: -3, nounForms: carForms })).toBe(
-      "٣ سيارات"
-    );
-  });
-
-  test("respects alwaysShowNumber option", () => {
-    expect(
-      formatArabicCount({
-        count: 1,
-        nounForms: carForms,
-        alwaysShowNumber: true,
-      })
-    ).toBe("١ سيارة");
-    expect(
-      formatArabicCount({
-        count: 2,
-        nounForms: carForms,
-        alwaysShowNumber: true,
-      })
-    ).toBe("٢ سيارتان");
+  test.each([
+    [ 1, "١ سيارة" ],
+    [ 2, "٢ سيارتان" ],
+    [ 0, "٠ سيارة" ], // zero with alwaysShowNumber
+  ])("respects alwaysShowNumber option for count %d", (count, expected) => {
+    expect(formatArabicCount({ count, nounForms: carForms, alwaysShowNumber: true })).toBe(expected);
   });
 
   test("respects custom locale", () => {
-    expect(
-      formatArabicCount({ count: 3, nounForms: carForms, locale: "en-US" })
-    ).toBe("3 سيارات");
+    expect(formatArabicCount({ count: 3, nounForms: carForms, locale: "en-US" })).toBe("3 سيارات");
+    expect(formatArabicCount({ count: 7, nounForms: carForms, locale: "ar-EG" })).toBe("٧ سيارات");
+  });
+
+  test("handles fractional numbers correctly (defaults to singular)", () => {
+    for (const [ count, expected ] of fractionalTests) {
+      expect(formatArabicCount({ count, nounForms: carForms })).toBe(expected);
+    }
   });
 
   test("throws error for invalid nounForms", () => {
+    expect(() => formatArabicCount({ count: 1, nounForms: null as any })).toThrow();
+    expect(() => formatArabicCount({ count: 1, nounForms: {} as any })).toThrow();
+    expect(() => formatArabicCount({ count: 1, nounForms: { singular: "test" } as any })).toThrow();
     expect(() =>
-      formatArabicCount({ count: 1, nounForms: null as any })
-    ).toThrow();
-    expect(() =>
-      formatArabicCount({ count: 1, nounForms: {} as any })
-    ).toThrow();
-    expect(() =>
-      formatArabicCount({ count: 1, nounForms: { singular: "test" } as any })
+      formatArabicCount({
+        count: 1,
+        nounForms: { singular: " ", dual: " ", plural: " " } as any,
+      }),
     ).toThrow();
   });
 
   test("throws error for invalid count", () => {
-    expect(() =>
-      formatArabicCount({ count: NaN, nounForms: carForms })
-    ).toThrow();
+    expect(() => formatArabicCount({ count: Number.NaN, nounForms: carForms })).toThrow();
+    expect(() => formatArabicCount({ count: Number.POSITIVE_INFINITY, nounForms: carForms })).toThrow();
+    expect(() => formatArabicCount({ count: Number.NEGATIVE_INFINITY, nounForms: carForms })).toThrow();
   });
 
-  test("handles fractional numbers correctly (defaults to singular)", () => {
-    expect(formatArabicCount({ count: 3.7, nounForms: carForms })).toBe(
-      "٣٫٧ سيارة"
-    );
-    expect(formatArabicCount({ count: -2.5, nounForms: carForms })).toBe(
-      "٢٫٥ سيارة"
-    );
+  test("throws error for invalid or empty locale", () => {
+    expect(() => formatArabicCount({ count: 1, nounForms: carForms, locale: "" })).toThrow();
+    expect(() => formatArabicCount({ count: 1, nounForms: carForms, locale: "invalid-locale" })).toThrow();
+  });
+
+  test("trims whitespace in nounForms", () => {
+    const forms: ArabicNounForms = {
+      singular: " سيارة ",
+      dual: " سيارتان ",
+      plural: " سيارات ",
+    };
+    expect(formatArabicCount({ count: 1, nounForms: forms })).toBe("سيارة");
+    expect(formatArabicCount({ count: 2, nounForms: forms })).toBe("سيارتان");
+    expect(formatArabicCount({ count: 5, nounForms: forms })).toBe("٥ سيارات");
   });
 });

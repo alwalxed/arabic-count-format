@@ -33,7 +33,7 @@ export interface ArabicCountPhraseOptions {
   /**
    * Optional locale for number formatting (defaults to "ar-SA")
    */
-  locale?: Intl.LocalesArgument;
+  locale?: string;
 
   /**
    * Whether to include the number in the output for counts 1 and 2
@@ -44,14 +44,44 @@ export interface ArabicCountPhraseOptions {
 }
 
 /**
+ * Type guard to validate ArabicNounForms structure
+ */
+function isValidNounForms(nounForms: unknown): nounForms is ArabicNounForms {
+  if (nounForms == null || typeof nounForms !== "object") {
+    return false;
+  }
+
+  const forms = nounForms as Record<string, unknown>;
+
+  return (
+    typeof forms.singular === "string" &&
+    typeof forms.dual === "string" &&
+    typeof forms.plural === "string" &&
+    forms.singular.trim().length > 0 &&
+    forms.dual.trim().length > 0 &&
+    forms.plural.trim().length > 0
+  );
+}
+
+/**
+ * Validates and normalizes the locale parameter
+ */
+function validateLocale(locale: string): string {
+  const normalizedLocale = locale.trim();
+
+  if (normalizedLocale.length === 0) {
+    throw new Error("Locale cannot be empty");
+  }
+
+  if (!Intl.NumberFormat.supportedLocalesOf(normalizedLocale).length) {
+    throw new Error(`Unsupported locale: "${ normalizedLocale }". Please use a valid locale identifier.`);
+  }
+
+  return normalizedLocale;
+}
+
+/**
  * Returns the grammatically correct Arabic phrase for a given count and noun.
- *
- * Arabic has complex rules for noun-number agreement:
- * - 0: "لا" + singular
- * - 1: singular
- * - 2: dual
- * - 3-10: plural
- * - 11+: singular
  *
  * @param options - Configuration options for generating the Arabic count phrase
  * @returns A string that correctly combines the number and noun based on Arabic grammar rules
@@ -63,73 +93,70 @@ export interface ArabicCountPhraseOptions {
  *   plural: "سيارات"
  * };
  *
- * // Basic usage
  * formatArabicCount({ count: 0, nounForms: carForms }); // => "لا سيارة"
  * formatArabicCount({ count: 1, nounForms: carForms }); // => "سيارة"
  * formatArabicCount({ count: 2, nounForms: carForms }); // => "سيارتان"
- * formatArabicCount({ count: 7, nounForms: carForms }); // => "٧ سيارات"
- * formatArabicCount({ count: 15, nounForms: carForms }); // => "١٥ سيارة"
+ * formatArabicCount({ count: 7, nounForms: carForms }); // => "٢ سيارات"
+ * formatArabicCount({ count: 15, nounForms: carForms }); // => "٢٥ سيارة"
  *
- * // With additional options
+ * // With options
  * formatArabicCount({
  *   count: 1,
  *   nounForms: carForms,
  *   alwaysShowNumber: true
- * }); // => "١ سيارة"
+ * }); // => "٢ سيارة"
  *
  * @throws Will throw an error if options are invalid or missing required properties
  */
 export function formatArabicCount(options: ArabicCountPhraseOptions): string {
-  const {
-    count,
-    nounForms,
-    locale = "ar-SA",
-    alwaysShowNumber = false,
-  } = options;
-
-  if (nounForms == null) {
-    throw new Error("nounForms is required");
+  if (options == null || typeof options !== "object") {
+    throw new Error("Options parameter is required and must be an object");
   }
 
-  if (typeof nounForms !== "object") {
-    throw new Error("nounForms must be an object");
+  const { count, nounForms, locale = "ar-SA", alwaysShowNumber = false } = options;
+
+  if (typeof count !== "number") {
+    throw new Error(`Count must be a number, received: ${ typeof count }`);
   }
 
-  if (!nounForms.singular || !nounForms.dual || !nounForms.plural) {
-    throw new Error(
-      "nounForms must contain singular, dual, and plural properties"
-    );
+  if (!Number.isFinite(count)) {
+    throw new Error("Count must be a finite number (not NaN, Infinity, or -Infinity)");
   }
 
-  if (typeof count !== "number" || isNaN(count)) {
-    throw new Error("count must be a valid number");
+  if (!isValidNounForms(nounForms)) {
+    throw new Error("nounForms must be an object with non-empty string properties: singular, dual, and plural");
   }
+
+  const singular = nounForms.singular.trim();
+  const dual = nounForms.dual.trim();
+  const plural = nounForms.plural.trim();
+
+  const validatedLocale = validateLocale(locale);
 
   const absoluteCount = Math.abs(count);
-  const arabicNumber = new Intl.NumberFormat(locale).format(absoluteCount);
+  const formattedNumber = new Intl.NumberFormat(validatedLocale).format(absoluteCount);
+  const isWholeNumber = Number.isInteger(absoluteCount);
 
-  const isInteger = Number.isInteger(absoluteCount);
-
-  if (!isInteger) {
-    return `${ arabicNumber } ${ nounForms.singular }`;
+  if (!isWholeNumber) {
+    return `${ formattedNumber } ${ singular }`;
   }
 
-  const integerCount = absoluteCount;
+  const wholeCount = absoluteCount;
 
-  if (integerCount === 0) {
-    return `لا ${ nounForms.singular }`;
-  } else if (integerCount === 1) {
-    return alwaysShowNumber
-      ? `${ arabicNumber } ${ nounForms.singular }`
-      : nounForms.singular;
-  } else if (integerCount === 2) {
-    return alwaysShowNumber
-      ? `${ arabicNumber } ${ nounForms.dual }`
-      : nounForms.dual;
-  } else if (integerCount >= 3 && integerCount <= 10) {
-    return `${ arabicNumber } ${ nounForms.plural }`;
-  } else {
-    return `${ arabicNumber } ${ nounForms.singular }`;
+  switch (true) {
+    case wholeCount === 0:
+      return alwaysShowNumber ? `${ formattedNumber } ${ singular }` : `لا ${ singular }`;
+
+    case wholeCount === 1:
+      return alwaysShowNumber ? `${ formattedNumber } ${ singular }` : singular;
+
+    case wholeCount === 2:
+      return alwaysShowNumber ? `${ formattedNumber } ${ dual }` : dual;
+
+    case wholeCount >= 3 && wholeCount <= 10:
+      return `${ formattedNumber } ${ plural }`;
+
+    default: // 11 and above
+      return `${ formattedNumber } ${ singular }`;
   }
 }
-
